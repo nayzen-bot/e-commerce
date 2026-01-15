@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation en cours - shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <style>
+        .payment-steps {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--color-bg-alt);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .step.completed .step-number {
+            background: var(--color-success);
+        }
+
+        .step-content h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--color-text);
+        }
+
+        .step-content p {
+            margin: 0;
+            color: var(--color-text-secondary);
+        }
+
+        .paypal-address {
+            background: var(--color-primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .warning-box {
+            background: var(--color-warning);
+            color: var(--color-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .spinner-large {
+            width: 80px;
+            height: 80px;
+            border: 6px solid var(--color-bg-alt);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand"><span>🛍️</span><span>shopTonIDF</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="container mt-3xl mb-3xl">
+        <div class="card p-3xl scale-in">
+            <div class="loading-container">
+                <div class="spinner-large"></div>
+                <h1 class="text-primary mb-md">⏳ Validation en cours...</h1>
+                <p class="mb-xl" style="font-size: 1.125rem;">Veuillez patienter pendant que nous vérifions votre
+                    commande</p>
+            </div>
+
+            <div class="payment-steps">
+                <h2 class="text-center mb-xl">📋 Étapes de paiement</h2>
+
+                <div class="warning-box pulse">
+                    ⚠️ IMPORTANT : Utilisez UNIQUEMENT "Amis et Famille" - Les paiements en "Biens et Services" seront
+                    REFUSÉS
+                </div>
+
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>💳 Ouvrez PayPal</h3>
+                        <p>Connectez-vous à votre compte PayPal et sélectionnez "Envoyer de l'argent"</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>📧 Entrez l'adresse</h3>
+                        <div class="paypal-address">ssqacsa@gmail.com</div>
+                        <p>Copiez et collez cette adresse dans le champ destinataire</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>👥 Sélectionnez "Amis et Famille"</h3>
+                        <p><strong style="color: var(--color-error);">NE PAS</strong> choisir "Biens et Services" -
+                            Votre commande sera <strong>REFUSÉE</strong></p>
+                        <p style="margin-top: 0.5rem;">Le mode "Amis et Famille" est <strong>obligatoire</strong> (frais
+                            gratuits, non remboursable)</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>💰 Entrez le montant</h3>
+                        <p id="order-amount">Montant de votre commande à envoyer</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3>✅ Validez le paiement</h3>
+                        <p>Vérifiez toutes les informations et confirmez l'envoi sur PayPal</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-xl">
+                <p class="text-secondary">Une fois le paiement effectué, votre commande sera validée et vous recevrez
+                    une confirmation.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Get order details from URL
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get('order_id');
+        const amount = params.get('amount');
+
+        if (amount) {
+            document.getElementById('order-amount').innerHTML = `
+        Envoyez <strong style="color: var(--color-primary); font-size: 1.25rem;">${AppUtils.formatCurrency(parseFloat(amount))}</strong>
+      `;
+        }
+
+        // Redirect to confirmation after 15 seconds
+        setTimeout(() => {
+            if (orderId) {
+                window.location.href = `/confirmation?order_id=${orderId}`;
+            }
+        }, 15000);
+
+        // Mark steps as completed progressively
+        const steps = document.querySelectorAll('.step');
+        let currentStep = 0;
+
+        setInterval(() => {
+            if (currentStep < steps.length) {
+                steps[currentStep].classList.remove('active');
+                steps[currentStep].classList.add('completed');
+                currentStep++;
+                if (currentStep < steps.length) {
+                    steps[currentStep].classList.add('active');
+                }
+            }
+        }, 3000);
+    </script>
+</body>
+
+</html>

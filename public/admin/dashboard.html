@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Admin shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-logo">🛍️ shopTonIDF</div>
+
+            <nav>
+                <ul class="admin-nav">
+                    <li class="admin-nav-item">
+                        <a href="/dashboard" class="admin-nav-link active">📊 Dashboard</a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="/dashboard/products" class="admin-nav-link">📦 Produits</a>
+                    </li>
+                    <li class="admin-nav-item">
+                        <a href="/dashboard/orders" class="admin-nav-link">🛒 Commandes</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <button class="btn admin-logout" onclick="handleAdminLogout()">
+                🚪 Déconnexion
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 class="admin-title">Dashboard</h1>
+                <div class="admin-user">
+                    <span>🔒</span>
+                    <span>Accès sécurisé par IP</span>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-label">Total Produits</div>
+                    <div class="stat-value" id="stat-products">0</div>
+                </div>
+
+                <div class="stat-card secondary">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-label">Total Commandes</div>
+                    <div class="stat-value" id="stat-orders">0</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-label">Paiements en attente</div>
+                    <div class="stat-value" id="stat-pending">0</div>
+                </div>
+
+                <div class="stat-card success">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Revenu Total</div>
+                    <div class="stat-value" id="stat-revenue">€0</div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alerts -->
+            <div class="data-table">
+                <h3 class="table-title">⚠️ Alertes Stock Faible</h3>
+                <div id="low-stock-alerts"></div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="grid grid-cols-2 gap-lg mt-xl">
+                <div class="card hover-lift">
+                    <h3>🆕 Ajouter un produit</h3>
+                    <p>Créer un nouveau produit dans le catalogue</p>
+                    <a href="/dashboard/products" class="btn btn-primary mt-md">Accéder</a>
+                </div>
+
+                <div class="card hover-lift">
+                    <h3>📋 Gérer les commandes</h3>
+                    <p>Vérifier les paiements et mettre à jour les livraisons</p>
+                    <a href="/dashboard/orders" class="btn btn-secondary mt-md">Accéder</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardStats();
+        });
+    </script>
+</body>
+
+</html>

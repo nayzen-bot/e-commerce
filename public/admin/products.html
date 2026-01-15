@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produits - Admin shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">🛍️ shopTonIDF</div>
+            <nav>
+                <ul class="admin-nav">
+                    <li class="admin-nav-item"><a href="/dashboard" class="admin-nav-link">📊 Dashboard</a></li>
+                    <li class="admin-nav-item"><a href="/dashboard/products" class="admin-nav-link active">📦
+                            Produits</a></li>
+                    <li class="admin-nav-item"><a href="/dashboard/orders" class="admin-nav-link">🛒 Commandes</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 class="admin-title">Gestion des Produits</h1>
+            </header>
+
+            <!-- Product Form -->
+            <div id="product-form-section" class="product-form">
+                <h3>Ajouter / Modifier un produit</h3>
+                <form id="product-form" onsubmit="handleProductSubmit(event)">
+                    <input type="hidden" id="product-id">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nom du produit *</label>
+                            <input type="text" id="product-name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Catégorie *</label>
+                            <select id="product-category" class="form-select" required>
+                                <option value="Electronics">Électronique</option>
+                                <option value="Clothing">Vêtements</option>
+                                <option value="Accessories">Accessoires</option>
+                                <option value="Général">Général</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea id="product-description" class="form-textarea"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Prix (€) *</label>
+                            <input type="number" id="product-price" class="form-input" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Stock *</label>
+                            <input type="number" id="product-stock" class="form-input" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">📷 Image du produit</label>
+                        <div style="display: flex; gap: 1rem; align-items: end;">
+                            <input type="file" id="product-image-file" class="form-input" accept="image/*"
+                                onchange="handleImageUpload(event)" style="flex: 1;">
+                            <span class="text-secondary">ou</span>
+                            <input type="text" id="product-image" class="form-input"
+                                placeholder="/images/products/product.jpg" style="flex: 2;">
+                        </div>
+                        <small class="text-secondary">Choisissez une image depuis votre ordinateur ou entrez une
+                            URL</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="product-featured" style="width: auto;">
+                            Produit vedette
+                        </label>
+                    </div>
+
+                    <div class="flex gap-md">
+                        <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('product-form').reset(); document.getElementById('product-id').value='';">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Products Table -->
+            <div class="data-table mt-xl">
+                <div class="table-header">
+                    <h3 class="table-title">Liste des produits</h3>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Vedette</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <tr>
+                            <td colspan="7" class="text-center">Chargement...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminProducts();
+        });
+    </script>
+</body>
+
+</html>

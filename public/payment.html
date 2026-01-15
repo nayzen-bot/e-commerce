@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement - shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <style>
+        .payment-info-box {
+            background: var(--color-bg-alt);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--color-primary);
+            margin-bottom: 2rem;
+        }
+
+        .paypal-address-big {
+            background: var(--color-primary);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1.5rem 0;
+            animation: pulse 2s infinite;
+        }
+
+        .warning-critical {
+            background: var(--color-error);
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1.5rem 0;
+            border: 3px solid var(--color-warning);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+        }
+
+        .step-box {
+            background: var(--color-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--color-primary);
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand"><span>🛍️</span><span>shopTonIDF</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="container mt-3xl mb-3xl">
+        <div class="text-center mb-xl">
+            <h1>💳 Étape 2/3 : Paiement PayPal</h1>
+            <p style="font-size: 1.125rem;">Suivez les instructions ci-dessous pour finaliser votre commande</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-xl">
+            <div style="grid-column: span 2">
+                <div class="warning-critical pulse">
+                    ⚠️ ATTENTION : Utilisez UNIQUEMENT "Amis et Famille"<br>
+                    Les paiements en "Biens et Services" seront AUTOMATIQUEMENT REFUSÉS
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">📧 Adresse de paiement</h3>
+                    <div class="card-body">
+                        <div class="paypal-address-big">
+                            ssqacsa@gmail.com
+                        </div>
+                        <p class="text-center text-secondary">Envoyez le paiement à cette adresse PayPal</p>
+                    </div>
+                </div>
+
+                <div class="card mt-lg">
+                    <h3 class="card-title">📋 Instructions étape par étape</h3>
+                    <div class="card-body">
+                        <div class="step-box">
+                            <span class="step-number">1</span>
+                            <strong>Ouvrez PayPal</strong><br>
+                            <small class="text-secondary">Connectez-vous à votre compte et sélectionnez "Envoyer de
+                                l'argent"</small>
+                        </div>
+
+                        <div class="step-box">
+                            <span class="step-number">2</span>
+                            <strong>Entrez l'adresse : ssqacsa@gmail.com</strong><br>
+                            <small class="text-secondary">Copiez-collez l'adresse exactement comme indiqué</small>
+                        </div>
+
+                        <div class="step-box">
+                            <span class="step-number">3</span>
+                            <strong style="color: var(--color-error);">⚠️ IMPORTANT : Sélectionnez "Amis et
+                                Famille"</strong><br>
+                            <small class="text-secondary">Ne choisissez PAS "Biens et Services" - votre commande sera
+                                refusée</small>
+                        </div>
+
+                        <div class="step-box">
+                            <span class="step-number">4</span>
+                            <strong>Entrez le montant : <span id="amount-display"
+                                    class="text-primary"></span></strong><br>
+                            <small class="text-secondary">Vérifiez bien le montant total</small>
+                        </div>
+
+                        <div class="step-box">
+                            <span class="step-number">5</span>
+                            <strong>Confirmez le paiement sur PayPal</strong><br>
+                            <small class="text-secondary">Vérifiez toutes les informations avant de valider</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-lg">
+                    <h3 class="card-title">✅ Confirmation</h3>
+                    <div class="card-body">
+                        <form id="payment-confirmation-form">
+                            <div class="alert alert-info mb-md">
+                                <strong>💡 Important :</strong> N'appuyez sur "J'ai effectué le paiement" qu'APRÈS avoir
+                                confirmé le paiement sur PayPal
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Votre nom PayPal *</label>
+                                <input type="text" id="paypal_name" class="form-input"
+                                    placeholder="Le nom affiché sur votre compte PayPal" required>
+                                <small class="text-secondary">Ce nom nous permettra d'identifier votre paiement</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-md">
+                                ✅ J'ai effectué le paiement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3 class="card-title">📦 Récapitulatif</h3>
+                    <div id="order-summary" class="card-body"></div>
+                </div>
+
+                <div class="card mt-lg">
+                    <h3 class="card-title">📍 Livraison</h3>
+                    <div id="delivery-info" class="card-body"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        // Load order data from sessionStorage
+        const checkoutData = JSON.parse(sessionStorage.getItem('checkout_data'));
+
+        if (!checkoutData) {
+            window.location.href = '/cart';
+        }
+
+        // Display order summary
+        const summaryDiv = document.getElementById('order-summary');
+        summaryDiv.innerHTML = `
+      ${checkoutData.items.map(item => `
+        <div class="flex justify-between mb-sm">
+          <span>${item.name} x${item.quantity}</span>
+          <span>${AppUtils.formatCurrency(item.price * item.quantity)}</span>
+        </div>
+      `).join('')}
+      <hr class="mt-md mb-md">
+      <div class="flex justify-between font-bold" style="font-size: 1.25rem;">
+        <span>Total:</span>
+        <span class="text-primary">${AppUtils.formatCurrency(checkoutData.total)}</span>
+      </div>
+    `;
+
+        // Display amount
+        document.getElementById('amount-display').textContent = AppUtils.formatCurrency(checkoutData.total);
+
+        // Display delivery info
+        const deliveryDiv = document.getElementById('delivery-info');
+        deliveryDiv.innerHTML = `
+      <p><strong>${checkoutData.customer_name}</strong></p>
+      <p>${checkoutData.address}</p>
+      <p>${checkoutData.postal_code} ${checkoutData.city}</p>
+      ${checkoutData.customer_phone ? `<p>📞 ${checkoutData.customer_phone}</p>` : ''}
+      <p>📧 ${checkoutData.customer_email}</p>
+    `;
+
+        // Handle confirmation
+        document.getElementById('payment-confirmation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const paypalName = document.getElementById('paypal_name').value;
+
+            // Create complete order data
+            const orderData = {
+                ...checkoutData,
+                paypal_name: paypalName,
+                items: checkoutData.items.map(item => ({
+                    product_id: item.product_id,
+                    quantity: item.quantity
+                }))
+            };
+
+            try {
+                Animations.showLoading('Création de votre commande...');
+                const response = await API.createOrder(orderData);
+
+                if (response.success) {
+                    // Clear cart and session
+                    Cart.clear();
+                    sessionStorage.removeItem('checkout_data');
+
+                    // Redirect to success page
+                    window.location.href = `/confirmation?order_id=${response.order_id}`;
+                } else {
+                    throw new Error(response.message);
+                }
+            } catch (error) {
+                Animations.hideLoading();
+                Animations.showError(error.message || 'Erreur lors de la création de la commande');
+            }
+        });
+    </script>
+</body>
+
+</html>

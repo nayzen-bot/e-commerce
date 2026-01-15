@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commandes - Admin shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar">
+            <div class="admin-logo">🛍️ shopTonIDF</div>
+            <nav>
+                <ul class="admin-nav">
+                    <li class="admin-nav-item"><a href="/dashboard" class="admin-nav-link">📊 Dashboard</a></li>
+                    <li class="admin-nav-item"><a href="/dashboard/products" class="admin-nav-link">📦 Produits</a></li>
+                    <li class="admin-nav-item"><a href="/dashboard/orders" class="admin-nav-link active">🛒
+                            Commandes</a></li>
+                </ul>
+            </nav>
+            <button class="btn admin-logout" onclick="handleAdminLogout()">🚪 Déconnexion</button>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 class="admin-title">Gestion des Commandes</h1>
+            </header>
+
+            <div class="data-table">
+                <div class="table-header">
+                    <h3 class="table-title">Liste des commandes</h3>
+                    <div class="table-filters">
+                        <button class="btn btn-sm btn-outline" onclick="loadAdminOrders()">🔄 Actualiser</button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Client</th>
+                            <th>Email</th>
+                            <th>PayPal</th>
+                            <th>Montant</th>
+                            <th>Paiement</th>
+                            <th>Livraison</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <tr>
+                            <td colspan="8" class="text-center">Chargement...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-info mt-xl">
+                <strong>💡 Astuce:</strong> Vérifiez les paiements PayPal manuellement en utilisant le nom PayPal fourni
+                par le client. Une fois vérifié, changez le statut du paiement à "Vérifié".
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminOrders();
+        });
+    </script>
+</body>
+
+</html>

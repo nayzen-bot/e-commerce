@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="shopTonIDF - Votre boutique e-commerce en Île-de-France">
+    <title>shopTonIDF - Boutique en ligne Île-de-France</title>
+
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand">
+                    <span>🛍️</span>
+                    <span>shopTonIDF</span>
+                </a>
+
+                <button class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <ul class="nav-links">
+                    <li><a href="/" class="nav-link">Accueil</a></li>
+                    <li><a href="/catalog" class="nav-link">Catalogue</a></li>
+                    <li><a href="/legal" class="nav-link">Informations</a></li>
+                    <li>
+                        <a href="/cart" class="nav-link" style="position: relative;">
+                            🛒 Panier
+                            <span class="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1 class="hero-title">Bienvenue sur shopTonIDF</h1>
+            <p class"hero-subtitle">Votre boutique e-commerce de confiance en Île-de-France</p>
+            <div class="hero-cta">
+                <a href="/catalog" class="btn btn-primary btn-lg">Découvrir le catalogue</a>
+                <a href="#featured" class="btn btn-secondary btn-lg">Produits vedettes</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="featured" class="container mt-3xl">
+        <div class="text-center mb-2xl">
+            <h2>Produits Vedettes</h2>
+            <p>Découvrez notre sélection de produits populaires</p>
+        </div>
+
+        <div id="featured-products" class="grid grid-cols-3 gap-lg">
+            <!-- Products will be loaded here by JavaScript -->
+            <div class="skeleton" style="height: 400px;"></div>
+            <div class="skeleton" style="height: 400px;"></div>
+            <div class="skeleton" style="height: 400px;"></div>
+        </div>
+
+        <div class="text-center mt-xl">
+            <a href="/catalog" class="btn btn-primary btn-lg">Voir tous les produits</a>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="container mt-3xl mb-3xl">
+        <div class="text-center mb-2xl">
+            <h2>Pourquoi nous choisir ?</h2>
+        </div>
+
+        <div class="grid grid-cols-3 gap-xl">
+            <div class="card text-center">
+                <div style="font-size: 48px; margin-bottom: 1rem;">🚚</div>
+                <h3>Livraison Île-de-France</h3>
+                <p>Nous livrons dans toute l'Île-de-France avec un service rapide et fiable</p>
+            </div>
+
+            <div class="card text-center">
+                <div style="font-size: 48px; margin-bottom: 1rem;">✅</div>
+                <h3>Produits de qualité</h3>
+                <p>Une sélection rigoureuse de produits de haute qualité pour votre satisfaction</p>
+            </div>
+
+            <div class="card text-center">
+                <div style="font-size: 48px; margin-bottom: 1rem;">🔒</div>
+                <h3>Paiement sécurisé</h3>
+                <p>Vos transactions sont sécurisées via PayPal</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>shopTonIDF</h4>
+                    <p>Votre partenaire e-commerce en Île-de-France. Produits de qualité, livraison rapide.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Liens rapides</h4>
+                    <p><a href="/">Accueil</a></p>
+                    <p><a href="/catalog">Catalogue</a></p>
+                    <p><a href="/cart">Panier</a></p>
+                    <p><a href="/tracking">Suivi de commande</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Informations</h4>
+                    <p><a href="/legal">Mentions légales</a></p>
+                    <p><a href="/legal#privacy">Politique de confidentialité</a></p>
+                    <p><a href="/legal#cgv">CGV</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>📧 contact@shoptonidf.fr</p>
+                    <p>📍 Île-de-France uniquement</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 shopTonIDF. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        // Load featured products
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await API.getFeaturedProducts();
+
+                if (response.success && response.products.length > 0) {
+                    const container = document.getElementById('featured-products');
+                    container.innerHTML = response.products.map(product => `
+            <div class="product-card fade-in-up">
+              <div class="product-image">
+                ${product.featured ? '<span class="product-badge">⭐ Vedette</span>' : ''}
+                📦
+              </div>
+              <div class="product-content">
+                <div class="product-category">${product.category}</div>
+                <h3 class="product-title">${product.name}</h3>
+                <p class="product-description">${product.description}</p>
+                <div class="product-footer">
+                  <div>
+                    <div class="product-price">${AppUtils.formatCurrency(product.price)}</div>
+                    <div class="product-stock ${product.stock < 10 ? 'low' : ''}">${product.stock} en stock</div>
+                  </div>
+                  <button class="btn btn-primary" onclick="window.location.href='/product/${product.id}'">
+                    Voir détails
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+                    // Stagger animate
+                    const cards = container.querySelectorAll('.product-card');
+                    Animations.staggerAnimate(cards);
+                }
+            } catch (error) {
+                console.error('Error loading featured products:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

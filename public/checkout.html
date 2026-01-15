@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passer commande - shopTonIDF</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/animations.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="navbar-brand"><span>🛍️</span><span>shopTonIDF</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="container mt-3xl mb-3xl">
+        <h1 class="text-center mb-xl">Finaliser votre commande</h1>
+
+        <div class="grid grid-cols-3 gap-xl">
+            <div style="grid-column: span 2">
+                <form id="checkout-form" class="card">
+                    <h3 class="card-title">Informations de livraison</h3>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nom complet *</label>
+                                <input type="text" id="customer_name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email *</label>
+                                <input type="email" id="customer_email" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Téléphone</label>
+                            <input type="tel" id="customer_phone" class="form-input" placeholder="0612345678">
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>ℹ️ Important:</strong> Nous livrons uniquement en Île-de-France (75, 77, 78, 91, 92,
+                            93, 94, 95)
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Ville *</label>
+                                <input type="text" id="city" class="form-input" placeholder="ex: Paris" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Code postal *</label>
+                                <input type="text" id="postal_code" class="form-input" placeholder="ex: 75001" required
+                                    maxlength="5" pattern="[0-9]{5}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Adresse complète *</label>
+                            <input type="text" id="address" class="form-input"
+                                placeholder="Commencez à taper votre adresse..." required autocomplete="off">
+                            <div id="address-suggestions" class="address-suggestions"></div>
+                        </div>
+
+                        <div id="address-error" class="alert alert-error" style="display: none;">
+                            <strong>❌ Livraison non disponible</strong><br>
+                            <span id="address-error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            Continuer vers le paiement →
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3 class="card-title">Récapitulatif</h3>
+                    <div id="order-summary" class="card-body"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .address-suggestions {
+            position: absolute;
+            background: var(--color-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 9999;
+            width: calc(100% - 2rem);
+            margin-top: 0.25rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .suggestion-item:hover {
+            background: var(--color-bg-alt);
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .validation-error {
+            color: var(--color-error);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .validation-error.show {
+            display: block;
+        }
+    </style>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/cart.js"></script>
+    <script src="/js/animations.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        function renderOrderSummary() {
+            const items = Cart.getItems();
+            if (items.length === 0) {
+                window.location.href = '/cart';
+                return;
+            }
+
+            const container = document.getElementById('order-summary');
+            const total = Cart.getTotal();
+
+            container.innerHTML = `
+        ${items.map(item => `
+          <div class="flex justify-between mb-sm">
+            <span>${item.name} x${item.quantity}</span>
+            <span>${AppUtils.formatCurrency(item.price * item.quantity)}</span>
+          </div>
+        `).join('')}
+        <hr class="mt-md mb-md">
+        <div class="flex justify-between font-bold" style="font-size: 1.25rem;">
+          <span>Total:</span>
+          <span class="text-primary">${AppUtils.formatCurrency(total)}</span>
+        </div>
+      `;
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Client-side validation
+            if (!clientValidation()) {
+                return;
+            }
+
+            // Store order data in sessionStorage (without creating order yet)
+            const orderData = {
+                customer_name: document.getElementById('customer_name').value,
+                customer_email: document.getElementById('customer_email').value,
+                customer_phone: document.getElementById('customer_phone').value,
+                city: document.getElementById('city').value,
+                postal_code: document.getElementById('postal_code').value,
+                address: document.getElementById('address').value,
+                items: Cart.getItems().map(item => ({
+                    product_id: item.id,
+                    quantity: item.quantity,
+                    name: item.name,
+                    price: item.price
+                })),
+                total: Cart.getTotal()
+            };
+
+            // Check IDF validation before proceeding
+            try {
+                Animations.showLoading('Vérification de l\'adresse...');
+
+                // Quick validation check (we'll do full validation on payment page)
+                const postalCode = orderData.postal_code;
+                const idfDepartments = ['75', '77', '78', '91', '92', '93', '94', '95'];
+                const department = postalCode.substring(0, 2);
+
+                if (!idfDepartments.includes(department)) {
+                    throw new Error('Livraison disponible uniquement en Île-de-France');
+                }
+
+                // Save to sessionStorage
+                sessionStorage.setItem('checkout_data', JSON.stringify(orderData));
+
+                Animations.hideLoading();
+
+                // Redirect to payment page
+                window.location.href = '/payment';
+
+            } catch (error) {
+                Animations.hideLoading();
+                const errorDiv = document.getElementById('address-error');
+                const errorMsg = document.getElementById('address-error-message');
+                errorMsg.textContent = error.message;
+                errorDiv.style.display = 'block';
+                errorDiv.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // French Address Autocomplete using official API
+        let debounceTimer;
+        const addressInput = document.getElementById('address');
+        const suggestionsDiv = document.getElementById('address-suggestions');
+
+        addressInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            const query = e.target.value.trim();
+
+            if (query.length < 3) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+                    const data = await response.json();
+
+                    if (data.features && data.features.length > 0) {
+                        suggestionsDiv.innerHTML = data.features.map(feature => {
+                            const props = feature.properties;
+                            return `
+                                <div class="suggestion-item" data-address="${props.name}" data-city="${props.city}" data-postcode="${props.postcode}">
+                                    <strong>${props.name}</strong><br>
+                                    <small>${props.postcode} ${props.city}</small>
+                                </div>
+                            `;
+                        }).join('');
+
+                        suggestionsDiv.style.display = 'block';
+
+                        // Add click handlers
+                        suggestionsDiv.querySelectorAll('.suggestion-item').forEach(item => {
+                            item.addEventListener('click', () => {
+                                document.getElementById('address').value = item.dataset.address;
+                                document.getElementById('city').value = item.dataset.city;
+                                document.getElementById('postal_code').value = item.dataset.postcode;
+                                suggestionsDiv.style.display = 'none';
+                            });
+                        });
+                    } else {
+                        suggestionsDiv.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Address API error:', error);
+                }
+            }, 300);
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!addressInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+                suggestionsDiv.style.display = 'none';
+            }
+        });
+
+        // Client-side validation
+        function clientValidation() {
+            let isValid = true;
+
+            // Email validation
+            const email = document.getElementById('customer_email').value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email) || email.includes('++') || email.includes('@@')) {
+                showValidationError('customer_email', 'Email invalide ou suspect');
+                isValid = false;
+            }
+
+            // Phone validation
+            const phone = document.getElementById('customer_phone').value;
+            if (phone) {
+                const cleanPhone = phone.replace(/[\s.\-()]/g, '');
+                const phonePattern = /^(0[1-7]\d{8}|\+33[1-7]\d{8})$/;
+                const suspicious = /(.)\1{6,}|123456789|^\+{2,}|[a-zA-Z]/;
+
+                if (!phonePattern.test(cleanPhone) || suspicious.test(cleanPhone)) {
+                    showValidationError('customer_phone', 'Numéro de téléphone invalide');
+                    isValid = false;
+                }
+            }
+
+            // Address validation
+            const address = document.getElementById('address').value;
+            if (address.length < 5 || !/\d/.test(address) || !/[a-zA-Z]/.test(address)) {
+                showValidationError('address', 'Adresse invalide (doit contenir un numéro et un nom de rue)');
+                isValid = false;
+            }
+            if (/(.)\1{5,}|^test|^fake|asdf|qwerty/i.test(address)) {
+                showValidationError('address', 'Adresse suspecte détectée');
+                isValid = false;
+            }
+
+            // City validation
+            const city = document.getElementById('city').value;
+            if (!/^[a-zA-ZÀ-ÿ\s'-]+$/.test(city) || city.length < 2) {
+                showValidationError('city', 'Nom de ville invalide');
+                isValid = false;
+            }
+            if (/(.)\1{4,}|^test|^fake/i.test(city)) {
+                showValidationError('city', 'Nom de ville suspect');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                Animations.showError('Veuillez corriger les erreurs dans le formulaire');
+            }
+
+            return isValid;
+        }
+
+        function showValidationError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            let errorDiv = field.parentElement.querySelector('.validation-error');
+
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'validation-error';
+                field.parentElement.appendChild(errorDiv);
+            }
+
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            field.style.borderColor = 'var(--color-error)';
+
+            // Remove error on input
+            field.addEventListener('input', () => {
+                errorDiv.classList.remove('show');
+                field.style.borderColor = '';
+            }, { once: true });
+        }
+
+        // Wait for Cart to be initialized before rendering
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                renderOrderSummary();
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
